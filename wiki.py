@@ -15,6 +15,7 @@ def get_wiki(text):
 
 
 def wiki(id, vk, text):
+    # взятие информации из википедии
     wiki_data = get_wiki(text)
     if not wiki_data:
         vk.messages.send(user_id=id,
@@ -22,6 +23,7 @@ def wiki(id, vk, text):
                          keyboard=create_keyboard(['Функции']).get_keyboard(),
                          random_id=random.randint(0, 2 ** 64))
     text, url = wiki_data
+    # отправка сообщения
     vk.messages.send(user_id=id,
                      message=f"&#10071;{text}\n&#9889;Подробнее: {url}",
                      keyboard=create_keyboard(['Функции']).get_keyboard(),
