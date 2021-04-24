@@ -93,7 +93,7 @@ def test(id, longpoll, vk):
                 # результат
                 vk.messages.send(user_id=id,
                                  message=f'Ваш результат {count_of_currect_questions}/{len(questions)}.&#127881;&#127882;&#127881; Если хотите сыграть ещё раз, напишите "Старт"',
-                                 keyboard=create_keyboard(['']).get_keyboard(),
+                                 keyboard=create_keyboard(['Функции']).get_keyboard(),
                                  random_id=random.randint(0, 2 ** 64))
                 return None
 
