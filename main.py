@@ -16,8 +16,6 @@ from weather import weather
 from wiki import wiki
 from templates import *
 
-app = flask.Flask(__name__)
-
 def users(info, user, db_sess):
     user.id = info['id']
     user.last_name = info['last_name']
@@ -112,4 +110,4 @@ def main():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    main()
