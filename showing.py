@@ -4,7 +4,7 @@ from io import BytesIO
 import requests
 import vk_api
 
-from templates import geocoder
+from templates import geocoder, create_keyboard
 
 
 def showing(id, address, vk):
@@ -12,6 +12,7 @@ def showing(id, address, vk):
     if not coords_data:
         vk.messages.send(user_id=id,
                          message=f"Ой... Что-то пошло не так. Попробуйте ещё раз",
+                         keyboard=create_keyboard(['Функции']).get_keyboard(),
                          random_id=random.randint(0, 2 ** 64))
         return None
     coords = f'{coords_data[0]},{coords_data[1]}'
@@ -30,12 +31,14 @@ def showing(id, address, vk):
     if not response:
         vk.messages.send(user_id=id,
                          message=f"Ой... Что-то пошло не так. Попробуйте ещё раз",
+                         keyboard=create_keyboard(['Функции']).get_keyboard(),
                          random_id=random.randint(0, 2 ** 64))
         return None
     upload = vk_api.VkUpload(vk)
     photo = upload.photo_messages(BytesIO(response.content))
     vk_photo_id = f"photo{photo[0]['owner_id']}_{photo[0]['id']}"
-    vk.messages.send(peer_id=id, random_id=0, attachment=vk_photo_id)
+    vk.messages.send(peer_id=id, random_id=0, attachment=vk_photo_id,
+                     keyboard=create_keyboard(['Функции']).get_keyboard())
 
     # pilimage = Image.open(BytesIO(response.content)).convert("RGBA")
     # map_file = pygame.image.fromstring(pilimage.tobytes(), pilimage.size, pilimage.mode)

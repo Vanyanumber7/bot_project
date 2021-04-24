@@ -2,6 +2,8 @@ import random
 
 import wikipedia
 
+from templates import create_keyboard
+
 
 def get_wiki(text):
     try:
@@ -17,8 +19,10 @@ def wiki(id, vk, text):
     if not wiki_data:
         vk.messages.send(user_id=id,
                          message=f"Ой... Что-то пошло не так. Попробуйте ещё раз",
+                         keyboard=create_keyboard(['Функции']).get_keyboard(),
                          random_id=random.randint(0, 2 ** 64))
     text, url = wiki_data
     vk.messages.send(user_id=id,
-                     message=f"{text}\nПодробнее: {url}",
+                     message=f"&#10071;{text}\n&#9889;Подробнее: {url}",
+                     keyboard=create_keyboard(['Функции']).get_keyboard(),
                      random_id=random.randint(0, 2 ** 64))
