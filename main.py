@@ -3,6 +3,7 @@ from string import punctuation
 
 import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
+import flask
 
 from data import db_session
 from data.users import User
@@ -15,6 +16,7 @@ from weather import weather
 from wiki import wiki
 from templates import *
 
+app = flask.Flask(__name__)
 
 def users(info, user, db_sess):
     user.id = info['id']
@@ -110,4 +112,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    app.run(host='0.0.0.0', port=5000)
