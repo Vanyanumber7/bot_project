@@ -4,6 +4,7 @@ import requests
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 
 
+# Базовые классы
 YES = ['да', 'конечно', 'несомненно', 'разумеется', 'безусловно']
 NO = ['нет', 'не', 'неа', 'нет конечно', 'никогда', 'ни за что', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
 WHAT_IS_IT = [['что', 'такое'], ['кто', 'такой'], ['что', 'это'], ['кто', 'это']]
@@ -17,6 +18,7 @@ TRANSLATE = ['переведи', 'переведите', 'перевод', 'пе
 
 
 def function(id, vk):
+    # функция для показа возможностей
     vk.messages.send(user_id=id,
                      message="Вот что я могу:&#128540;\n"
                              "1. Что такое {что-то} - найдёт&#128269; нужное Вам понятие и даст ссылку на него\n"
@@ -30,6 +32,7 @@ def function(id, vk):
                      random_id=random.randint(0, 2 ** 64))
 
 def create_keyboard(options):
+    # создание клавиатуры
     keyboard = VkKeyboard(one_time=True)
     colors = [VkKeyboardColor.NEGATIVE, VkKeyboardColor.SECONDARY]
     i = -1
@@ -42,6 +45,7 @@ def create_keyboard(options):
 
 
 def geocoder(address):
+    # из адреса получаем координаты
     geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
 
     geocoder_params = {
