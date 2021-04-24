@@ -1,3 +1,5 @@
+from string import punctuation
+
 import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 import random
@@ -5,6 +7,7 @@ import random
 from data import db_session
 from data.users import User
 from logpass import *
+from wiki import wiki
 
 
 def users(info, user, db_sess):
@@ -64,17 +67,11 @@ def main():
                 update_users(info, now_user, db_sess)
 
             print(info)
-
-            vk.messages.send(user_id=event.obj.message['from_id'],
-                             message=f"Привет, {info['first_name']}!",
-                             random_id=random.randint(0, 2 ** 64))
-            try:
-                vk.messages.send(user_id=event.obj.message['from_id'],
-                                 message=f"Как поживает {info['city']['title']}?",
-                                 random_id=random.randint(0, 2 ** 64))
-            except KeyError:
+            text = event.obj.message['text'].translate(punctuation).lower().split()
+            if text[:2] in [['что', 'такое'], ['кто', 'такой']]:
+                wiki(info['id'], vk, text[2:])
+            elif text[0] in ['покажи']:
                 pass
-
 
 if __name__ == '__main__':
     main()
