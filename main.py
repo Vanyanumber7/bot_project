@@ -3,7 +3,6 @@ from string import punctuation
 
 import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
-import flask
 
 from data import db_session
 from data.users import User
@@ -91,11 +90,6 @@ def main():
             elif text_lower in HELLO_QUESTION:
                 vk.messages.send(user_id=id,
                                  message=random.choice(HELLO_ANSWER),
-                                 keyboard=create_keyboard(['Функции']).get_keyboard(),
-                                 random_id=random.randint(0, 2 ** 64))
-            elif text_lower in HOW_ARE_YOU:
-                vk.messages.send(user_id=id,
-                                 message=random.choice(I_AM_FINE),
                                  keyboard=create_keyboard(['Функции']).get_keyboard(),
                                  random_id=random.randint(0, 2 ** 64))
             elif text_lower in FUNC:
