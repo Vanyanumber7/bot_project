@@ -6,6 +6,7 @@ from templates import create_keyboard
 
 
 def trans(text):
+    # перевод с любого языка на английский
     trans = Translator()
     return trans.translate(text).text
 
@@ -13,9 +14,11 @@ def trans(text):
 def translation(id, text, lang, vk):
     try:
         translator = Translator()
+        # перевод языка на английский
         lang = trans(lang).lower()
         print(lang)
         dict_of_lang = {}
+        # переворот словаря языков
         for k, v in constants.LANGUAGES.items():
             dict_of_lang[v] = k
         print(dict_of_lang[lang])
