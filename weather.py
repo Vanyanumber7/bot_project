@@ -1,3 +1,4 @@
+from datetime import datetime
 import random
 
 import requests
@@ -10,6 +11,14 @@ from templates import geocoder
 def add_city(user, db_sess, city):
     user.city = city
     db_sess.commit()
+
+
+def get_text(city, response):
+    return f"Погода в городе {city}\n" \
+           f"{' в '.join(datetime.fromtimestamp(response['dt'] + response['timezone']).strftime('%d.%m.%Y %H:%M').split())}.\n" \
+           f"Температура {response['main']['temp']} °C.\n" \
+           f"Ощущается как {response['main']['feels_like']}.\n" \
+           f"{response['weather'][0]['description'].capitalize()}. Ветер {response['wind']['speed']} м/с."
 
 
 def weather(id, db_sess, longpoll, vk):
@@ -33,6 +42,7 @@ def weather(id, db_sess, longpoll, vk):
                 if event.obj.message['text'].lower() in ['да']:
                     city = user.city
                     break
+
     coords_data = geocoder(city)
 
     url = 'https://api.openweathermap.org/data/2.5/weather'
@@ -43,4 +53,8 @@ def weather(id, db_sess, longpoll, vk):
         'units': 'metric',
         'lang': 'ru'}
     response = requests.get(url=url, params=params)
-    print(response.json())
+    if not response:
+        return None
+    vk.messages.send(user_id=id,
+                     message=get_text(city, response.json()),
+                     random_id=random.randint(0, 2 ** 64))

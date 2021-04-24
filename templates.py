@@ -2,6 +2,8 @@ import requests
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 
 
+
+
 def create_keyboard(options):
     keyboard = VkKeyboard(one_time=True)
     colors = [VkKeyboardColor.NEGATIVE, VkKeyboardColor.SECONDARY]

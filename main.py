@@ -2,7 +2,6 @@ from string import punctuation
 
 import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
-import random
 
 from data import db_session
 from data.users import User
@@ -24,7 +23,8 @@ def users(info, user, db_sess):
     except KeyError:
         pass
     try:
-        user.city = info['city']['title']
+        if not user.city:
+            user.city = info['city']['title']
     except KeyError:
         pass
     try:
