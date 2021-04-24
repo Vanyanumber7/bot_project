@@ -7,6 +7,9 @@ import random
 from data import db_session
 from data.users import User
 from logpass import *
+from route import route
+from showing import showing
+from weather import weather
 from wiki import wiki
 
 
@@ -71,7 +74,12 @@ def main():
             if text[:2] in [['что', 'такое'], ['кто', 'такой']]:
                 wiki(info['id'], vk, text[2:])
             elif text[0] in ['покажи']:
-                pass
+                showing(info['id'],' '.join(text[1:]), vk)
+            elif text[0] in ['маршрут']:
+                address1, address2 = ' '.join(text[1:]).split('|')
+                route(info['id'], address1, address2, vk)
+            elif text[0] in ['погода']:
+                weather(info['id'], db_sess, longpoll, vk)
 
 if __name__ == '__main__':
     main()

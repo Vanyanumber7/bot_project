@@ -31,11 +31,9 @@ def geocoder(address):
     object = json_response["response"]["GeoObjectCollection"][
         "featureMember"][0]["GeoObject"]
     # Координаты центра топонима:
-    coords = object["Point"]["pos"]
+    coord_x, coord_y = object["Point"]["pos"].split(" ")
     # Долгота и широта:
     size = object['boundedBy']['Envelope']
     lower = list(map(float, size['lowerCorner'].split()))
     upper = list(map(float, size['upperCorner'].split()))
-    return coords, lower, upper
-
-    delta = f'{abs(lower[0] - upper[0])},{abs(lower[1] - upper[1])}'
+    return coord_x, coord_y, lower, upper

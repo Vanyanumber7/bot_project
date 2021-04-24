@@ -14,8 +14,11 @@ def get_wiki(text):
 
 def wiki(id, vk, text):
     wiki_data = get_wiki(text)
-    if wiki_data:
-        text, url = wiki_data
+    if not wiki_data:
+        vk.messages.send(user_id=id,
+                         message=f"Ой... Что-то пошло не так. Попробуйте ещё раз",
+                         random_id=random.randint(0, 2 ** 64))
+    text, url = wiki_data
     vk.messages.send(user_id=id,
                      message=f"{text}\nПодробнее: {url}",
                      random_id=random.randint(0, 2 ** 64))
