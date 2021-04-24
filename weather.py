@@ -1,5 +1,5 @@
-from datetime import datetime
 import random
+from datetime import datetime
 
 import requests
 from vk_api.bot_longpoll import VkBotEventType
@@ -9,13 +9,11 @@ from templates import geocoder, YES, NO, create_keyboard, FUNC, function
 
 
 def add_city(user, db_sess, city):
-    # обновление города в бд
     user.city = city
     db_sess.commit()
 
 
 def get_text(city, response):
-    # создание готового текста для сообщения
     return f"&#128204;Погода в городе {city}&#127751;\n" \
            f"{' в '.join(datetime.fromtimestamp(response['dt']).strftime('%d.%m.%Y %H:%M').split())}&#128337;\n" \
            f"Температура {response['main']['temp']}°C&#127777;\n" \
@@ -24,7 +22,6 @@ def get_text(city, response):
 
 
 def weather(id, db_sess, longpoll, vk):
-    # взятие города для погоды
     user = db_sess.query(User).filter(User.id == id).first()
     if user.city:
         vk.messages.send(user_id=id,
@@ -58,6 +55,20 @@ def weather(id, db_sess, longpoll, vk):
                     vk.messages.send(user_id=id,
                                      message=f"Ваш город {user.city}?",
                                      random_id=random.randint(0, 2 ** 64))
+    else:
+        vk.messages.send(user_id=id,
+                         message=f"Назовите, пожалуйста, свой город",
+                         keyboard=create_keyboard(['Стоп', 'Функции']).get_keyboard(),
+                         random_id=random.randint(0, 2 ** 64))
+        for event2 in longpoll.listen():
+            if event2.type == VkBotEventType.MESSAGE_NEW:
+                if event2.obj.message['text'].lower() in FUNC:
+                    function(id, vk)
+                if event2.obj.message['text'].lower() in FUNC + ['стоп']:
+                    break
+                city = event2.obj.message['text']
+                add_city(user, db_sess, city)
+                break
 
     coords_data = geocoder(city)
 
