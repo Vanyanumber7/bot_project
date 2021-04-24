@@ -1,5 +1,4 @@
 import random
-from datetime import datetime
 
 import wikipedia
 
@@ -23,7 +22,3 @@ def wiki(id, vk, text):
     vk.messages.send(user_id=id,
                      message=f"{text}\nПодробнее: {url}",
                      random_id=random.randint(0, 2 ** 64))
-
-
-
-print(datetime.utcfromtimestamp(1908765).strftime('%d-%m-%Y %H:%M:%S'))

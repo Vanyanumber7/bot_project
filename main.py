@@ -1,3 +1,4 @@
+import random
 from string import punctuation
 
 import vk_api
@@ -10,6 +11,7 @@ from route import route
 from showing import showing
 from weather import weather
 from wiki import wiki
+from templates import *
 
 
 def users(info, user, db_sess):
@@ -70,16 +72,38 @@ def main():
                 update_users(info, now_user, db_sess)
 
             print(info)
+            id = info['id']
             text = event.obj.message['text'].translate(punctuation).lower().split()
-            if text[:2] in [['что', 'такое'], ['кто', 'такой']]:
-                wiki(info['id'], vk, text[2:])
-            elif text[0] in ['покажи']:
-                showing(info['id'],' '.join(text[1:]), vk)
-            elif text[0] in ['маршрут']:
+            text_lower = event.obj.message['text'].translate(punctuation).lower()
+            if text[:2] in WHAT_IS_IT:
+                wiki(id, vk, text[2:])
+            elif text[0] in SHOW:
+                showing(id,' '.join(text[1:]), vk)
+            elif text[0] in ROUTER:
                 address1, address2 = ' '.join(text[1:]).split('|')
-                route(info['id'], address1, address2, vk)
-            elif text[0] in ['погода']:
-                weather(info['id'], db_sess, longpoll, vk)
-
+                route(id, address1, address2, vk)
+            elif text[0] in WEATHER_WORDS:
+                weather(id, db_sess, longpoll, vk)
+            elif text_lower in HELLO_QUESTION:
+                vk.messages.send(user_id=id,
+                                 message=random.choice(HELLO_ANSWER),
+                                 random_id=random.randint(0, 2 ** 64))
+            elif text_lower in HOW_ARE_YOU:
+                vk.messages.send(user_id=id,
+                                 message=random.choice(I_AM_FINE),
+                                 random_id=random.randint(0, 2 ** 64))
+            elif text_lower in FUNC:
+                vk.messages.send(user_id=id,
+                                 message="Вот что я могу:\n"
+                                         "1. Что такое {что-то} - найдёт нужное Вам понятие и даст сслыку на него\n"
+                                         "2. Покажи {что_то на карте} - отправит изображение карты с нужным объектом\n"
+                                         "3. Маршрут {пункт А} | {пункт Б} - отметит на карте эти точки и посчитает"
+                                         " расстояние по прямой\n"
+                                         "4. Погода - выведет текущую погоду в вашем городе",
+                                 random_id=random.randint(0, 2 ** 64))
+            else:
+                vk.messages.send(user_id=id,
+                                 message='Простите, я Вас не понял. Попробуйте ещё раз',
+                                 random_id=random.randint(0, 2 ** 64))
 if __name__ == '__main__':
     main()
