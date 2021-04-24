@@ -9,6 +9,7 @@ from data.users import User
 from logpass import *
 from route import route
 from showing import showing
+from test import test
 from translation import translation
 from weather import weather
 from wiki import wiki
@@ -99,6 +100,8 @@ def main():
                                  random_id=random.randint(0, 2 ** 64))
             elif text_lower in FUNC:
                 function(id, vk)
+            elif text[0] == 'тест':
+                test(id, longpoll, vk)
             else:
                 vk.messages.send(user_id=id,
                                  message='Простите, я Вас не понял. Попробуйте ещё раз',
