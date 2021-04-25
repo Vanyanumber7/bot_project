@@ -32,3 +32,6 @@ def translation(id, text, lang, vk):
                          message='Не удалось перевести. Попробуйте в другой раз',
                          keyboard=create_keyboard(['Функции']).get_keyboard(),
                          random_id=random.randint(0, 2 ** 64))
+
+
+print(trans('привет'))
