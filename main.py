@@ -1,19 +1,26 @@
-import random
+import logging
 from string import punctuation
 
-import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 
 from data import db_session
 from data.users import User
 from logpass import *
-from route import route
-from showing import showing
-from test import test
-from translation import translation
-from weather import weather
-from wiki import wiki
+from module.translation import translation
+from module.wiki import wiki
+from send.send_test import send_test
+from send.send_wiki import send_wiki
+from send.send_maps import *
+from send.send_translation import send_translation
+from send.send_weather import send_weather
+from send.vk_send import *
 from templates import *
+
+logging.basicConfig(
+    filename='example.log',
+    format='%(asctime)s %(levelname)s %(name)s %(message)s'
+)
+
 
 def users(info, user, db_sess):
     user.id = info['id']
@@ -56,10 +63,9 @@ def main():
     longpoll = VkBotLongPoll(vk_session, group_id=GROUP_ID)
     for event in longpoll.listen():
         if event.type == VkBotEventType.MESSAGE_NEW:
-
-            print('Новое сообщение:')
-            print('Для меня от:', event.obj.message['from_id'])
-            print('Текст:', event.obj.message['text'])
+            logging.info(event)
+            logging.warning('Для меня от:', event.obj.message['from_id'])
+            logging.warning('Текст:', event.obj.message['text'])
 
             vk = vk_session.get_api()
             info = vk.users.get(user_id=event.obj.message['from_id'], fields="bdate,city,domain,sex")[0]
@@ -77,30 +83,24 @@ def main():
             text = event.obj.message['text'].translate(punctuation).lower().split()
             text_lower = event.obj.message['text'].translate(punctuation).lower()
             if text[:2] in WHAT_IS_IT:
-                wiki(id, vk, text[2:])
+                send_wiki(vk, id, wiki(text[2:]))
             elif text[0] in SHOW:
-                showing(id, ' '.join(text[1:]), vk)
+                send_showing(vk, id, geocoder(text[1:]))
             elif text[0] in ROUTER:
                 address1, address2 = ' '.join(text[1:]).split('|')
-                route(id, address1, address2, vk)
+                send_route(vk, id, geocoder(address1), geocoder(address2))
             elif text[0] in WEATHER_WORDS:
-                weather(id, db_sess, longpoll, vk)
+                send_weather(id, db_sess, longpoll, vk)
             elif text[0] in TRANSLATE:
-                translation(id, ' '.join(event.obj.message['text'].split()[3:]), text[2], vk)
+                send_translation(vk, id, translation(' '.join(event.obj.message['text'].split()[3:]), text[2]))
             elif text_lower in HELLO_QUESTION:
-                vk.messages.send(user_id=id,
-                                 message=random.choice(HELLO_ANSWER),
-                                 keyboard=create_keyboard(['Функции']).get_keyboard(),
-                                 random_id=random.randint(0, 2 ** 64))
+                send(vk, id, random.choice(HELLO_ANSWER), ['Функции'])
             elif text_lower in FUNC:
                 function(id, vk)
             elif text[0] == 'тест':
-                test(id, longpoll, vk)
+                send_test(id, longpoll, vk)
             else:
-                vk.messages.send(user_id=id,
-                                 message='Простите, я Вас не понял. Попробуйте ещё раз',
-                                 keyboard=create_keyboard(['Функции']).get_keyboard(),
-                                 random_id=random.randint(0, 2 ** 64))
+                send(vk, id, 'Простите, я Вас не понял. Попробуйте ещё раз', ['Функции'])
 
 
 if __name__ == '__main__':
