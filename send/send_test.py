@@ -28,9 +28,10 @@ def send_test(id, longpoll, vk):
     send(vk, id, f"Вопрос {len(questions) - count_of_questions}! {now_question[0]}", now_question[1])
     for event in longpoll.listen():
         if event.type == VkBotEventType.MESSAGE_NEW:
-            logging.info(event)
-            logging.warning('Для меня от:', event.obj.message['from_id'])
-            logging.warning('Текст:', event.obj.message['text'])
+            logging.info('Новое сообщение')
+            logging.warning(f"Для меня от: {event.obj.message['from_id']}")
+            logging.warning(f"Текст: {event.obj.message['text']}")
+
 
             if count_of_questions:
                 # анализ ответа

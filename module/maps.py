@@ -66,5 +66,4 @@ def route(coords_data1, coords_data2, vk):
     upload = vk_api.VkUpload(vk)
     photo = upload.photo_messages(BytesIO(response.content))
     vk_photo_id = f"photo{photo[0]['owner_id']}_{photo[0]['id']}"
-    print(vk_photo_id, distance)
     return vk_photo_id, distance

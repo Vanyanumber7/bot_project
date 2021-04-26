@@ -16,7 +16,7 @@ from send.send_weather import send_weather
 from send.vk_send import *
 from templates import *
 
-logging.basicConfig(
+logging.basicConfig(level=logging.DEBUG,
     filename='example.log',
     format='%(asctime)s %(levelname)s %(name)s %(message)s'
 )
@@ -63,9 +63,9 @@ def main():
     longpoll = VkBotLongPoll(vk_session, group_id=GROUP_ID)
     for event in longpoll.listen():
         if event.type == VkBotEventType.MESSAGE_NEW:
-            logging.info(event)
-            logging.warning('Для меня от:', event.obj.message['from_id'])
-            logging.warning('Текст:', event.obj.message['text'])
+            logging.info('Новое сообщение')
+            logging.warning(f"Для меня от: {event.obj.message['from_id']}")
+            logging.warning(f"Текст: {event.obj.message['text']}")
 
             vk = vk_session.get_api()
             info = vk.users.get(user_id=event.obj.message['from_id'], fields="bdate,city,domain,sex")[0]
@@ -78,7 +78,6 @@ def main():
             else:
                 update_users(info, now_user, db_sess)
 
-            print(info)
             id = info['id']
             text = event.obj.message['text'].translate(punctuation).lower().split()
             text_lower = event.obj.message['text'].translate(punctuation).lower()
