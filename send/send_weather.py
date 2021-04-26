@@ -39,10 +39,6 @@ def send_weather(id, db_sess, longpoll, vk):
                     send(vk, id, f"Ваш город {user.city}?")
     else:
         send(vk, id, f"Назовите, пожалуйста, свой город", ['Стоп', 'Функции'])
-        vk.messages.send(user_id=id,
-                         message=f"Назовите, пожалуйста, свой город",
-                         keyboard=create_keyboard(['Стоп', 'Функции']).get_keyboard(),
-                         random_id=random.randint(0, 2 ** 64))
         for event2 in longpoll.listen():
             if event2.type == VkBotEventType.MESSAGE_NEW:
                 if event2.obj.message['text'].lower() in FUNC:
