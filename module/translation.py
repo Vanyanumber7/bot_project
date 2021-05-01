@@ -12,12 +12,10 @@ def translation(text, lang):
         translator = Translator()
         # перевод языка на английский
         lang = trans(lang).lower()
-        print(lang)
         dict_of_lang = {}
         # переворот словаря языков
         for k, v in constants.LANGUAGES.items():
             dict_of_lang[v] = k
-        print(dict_of_lang[lang])
         translation = translator.translate(text, dest=dict_of_lang[lang])
         return translation.text
     except Exception:
